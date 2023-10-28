@@ -1,0 +1,6 @@
+spring:
+  elasticsearch:
+    uris: ${ELASTIC_URI}
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}

@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+
+  application:
+    container_name: application
+    image: maks11/hw2-app:latest
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    networks:
+      - inner-network
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/testDB
+      ELASTIC_URI: http://elasticsearch:9200
+      SPRING_PROFILES_ACTIVE: doker
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:8.8.0
+    restart: always
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    healthcheck:
+      test: curl -s -f elasticsearch:9200/_cat/health >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - inner-network
+
+  mongodb:
+    image: mongo:7-jammy
+    container_name: mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - inner-network
+
+  telegraf:
+    container_name: telegraf
+    image: telegraf:1.18-alpine
+    volumes:
+      - ./telegraf/etc/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - influxdb
+    user: telegraf:1
+    ports:
+      - '127.0.0.1:8125:8125/udp'
+    networks:
+      - inner-network
+
+  influxdb:
+    container_name: influxdb
+    image: influxdb:1.8-alpine
+    env_file: configuration.env
+    ports:
+      - '127.0.0.1:8086:8086'
+    volumes:
+      - ./:/imports
+      - influxdb_data:/var/lib/influxdb
+    networks:
+      - inner-network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:8.0.2
+    depends_on:
+      - influxdb
+    env_file: configuration.env
+    ports:
+      - '127.0.0.1:3000:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ./grafana/dashboards/:/var/lib/grafana/dashboards/
+    networks:
+      - inner-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - grafana
+      - application
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "8090:80"
+    networks:
+      - inner-network
+
+volumes:
+  grafana_data: {}
+  influxdb_data: {}
+
+networks:
+  inner-network:
+    driver: bridge

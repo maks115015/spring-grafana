@@ -1,0 +1,40 @@
+http://localhost:80/app/
+http://localhost:80/app/mongo
+http://localhost:80/app/mongo POST {"id": "1", "data": "test_elastic"}
+http://localhost:80/app/mongo/1
+http://localhost:80/app/elastic
+http://localhost:80/app/elastic POST {"id": "1", "data": "test_mongo"}
+http://localhost:80/app/elastic/1
+http://localhost:80/app/elastic/1 DELETE
+http://localhost:80/app/
+http://localhost:80/app/mongo
+http://localhost:80/app/mongo POST {"id": "2", "data": "test_elastic"}
+http://localhost:80/app/mongo/2
+http://localhost:80/app/elastic
+http://localhost:80/app/elastic POST {"id": "2", "data": "test_mongo"}
+http://localhost:80/app/elastic/2
+http://localhost:80/app/elastic/2 DELETE
+http://localhost:80/app/
+http://localhost:80/app/mongo
+http://localhost:80/app/mongo POST {"id": "3", "data": "test_elastic"}
+http://localhost:80/app/mongo/3
+http://localhost:80/app/elastic
+http://localhost:80/app/elastic POST {"id": "3", "data": "test_mongo"}
+http://localhost:80/app/elastic/3
+http://localhost:80/app/elastic/3 DELETE
+http://localhost:80/app/
+http://localhost:80/app/mongo
+http://localhost:80/app/mongo POST {"id": "4", "data": "test_elastic"}
+http://localhost:80/app/mongo/4
+http://localhost:80/app/elastic
+http://localhost:80/app/elastic POST {"id": "4", "data": "test_mongo"}
+http://localhost:80/app/elastic/4
+http://localhost:80/app/elastic/4 DELETE
+http://localhost:80/app/
+http://localhost:80/app/mongo
+http://localhost:80/app/mongo POST {"id": "5", "data": "test_elastic"}
+http://localhost:80/app/mongo/5
+http://localhost:80/app/elastic
+http://localhost:80/app/elastic POST {"id": "5", "data": "test_mongo"}
+http://localhost:80/app/elastic/5
+http://localhost:80/app/elastic/5 DELETE
